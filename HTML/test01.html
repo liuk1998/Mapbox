@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+  <title>在网页上显示地图</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    #map {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div id='map'></div>
+  <script>
+    // 此 Mapbox访问令牌将您的 Mapbox GL JS 地图与 Mapbox 帐户相关联。
+    mapboxgl.accessToken = 'pk.eyJ1IjoibGl1a2U5OCIsImEiOiJjbDZnNGJmNHMwbzJoM2lvcjJhZnV3NWo5In0.nmUwLFa4fv5PChNZUf2GwQ';
+    // mapboxgl.Map: 每个 Mapbox GL JS 项目的基础。
+    const map = new mapboxgl.Map({
+      container: 'map', // 将放置地图的 HTML 元素。此元素是 `<div>` id 为 的"map"。
+      style: 'mapbox://styles/mapbox/streets-v12', // 地图样式的样式。URL用于确定地图包含哪些瓦片集以及它们的样式。上面的示例使用Mapbox Streets v12样式。
+      center: [116.40753, 39.90403], // 地图起始位置的坐标，按longitude(经度), latitude(纬度)顺序排列。
+      zoom: 3, // 地图应该初始化的缩放级别。这可以是整数或小数值。
+    });
+  </script>
+</body>
+</html>

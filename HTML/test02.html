@@ -33,10 +33,26 @@
        * 包括以下几种效果:
        * 1.地球仪: globe，三维球体，从太空看地球(默认)
        * 2.等面积投影: 区域相对大小是准确的，但形状扭曲。
-       * (1).equalEarth: 平等地球
+       * (1).equalEarth: 平等地球，纸片
+       * (2).albers: 凹型纸片
+       * 3.共型投影: 形状和角度准确，但尺寸变形。
+       * (1).lambertConformalConic: 半圆形纸片。
+       * 4.妥协投影: 尺寸和形状都失真。
+       * (1).winkelTripel: 平等地球，纸片
+       * (2).naturalEarth: 平等地球，纸片
+       * (3).equirectangular: 等距柱状
       */
-      projection: 'albers' 
+      projection: 'naturalEarth' // 在构造器中设置投影
     });
+
+    // 修改投影方法: setProjection
+    map.setProjection({
+      name: 'globe'
+    })
+
+    // 获取当前投影: getProjection
+    const projection = map.getProjection();
+    console.log('当前投影', projection);
   </script>
 </body>
 </html>

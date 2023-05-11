@@ -39,18 +39,35 @@
        * 圆锥投影: 创建的地图在特定点周围的区域几乎没有失真。远离该点，失真增加。
        * albers: 提供了准确的相对大小，但形状在更远的距离上会越来越扭曲。
        * lambertConformalConic: 用于航空图和许多区域制图系统。可以准确地表示形状和角度。相反，远离中心的区域的大小越来越大。
+       * 
+       * 自定义圆锥投影: 通过配置 center 和 parallels 属性，开发人员可以选择放置最小失真区域的位置。对于除 Albers 和 Lambert 等角二次曲线之外的任何投影，center和parallels属性都将被忽略。
+       * parallels: [纬度1, 纬度2]，通过在这两条纬线之间的区域中进行投影，可以减少区域和形状的失真。平行线可以是相同的纬度。
+       * center: [经度, 纬度]: 用于匹配方位的位置。该位置的尺寸和方位角始终与墨卡托中相同缩放比例的尺寸和方位角相同。在低缩放级别，其他位置的大小和方位可能会扭曲。
+       * 
+       * 矩形投影: 这些投影具有直线纬度和经度线。它们的矩形形状允许它们在 180 度子午线处环绕其东西边缘，这对于需要覆盖太平洋的地图非常有用。也可以使用 setRenderWorldCopies 禁用循环。
+       * equirectangular: 一种圆柱形的折衷投影，其中地图上的位置直接对应于它们的经度和纬度值。可用于绘制太平洋地图，同时最大限度地减少墨卡托的尺寸失真。
+       * mercator: 是 web 地图中引入的第一个投影，并且仍然被大多数地图平台广泛使用。一个圆柱形的共形投影。准确地显示形状和角度，这对导航非常有用。在世界范围内，它夸大了两极附近地理形状的大小。
+       * 
+       * 地球: 三维表示。
+       * globe(默认): 是从太空观察地球表面的正确表示。使用此投影将地球的显示一次限制为一个半球。
+       * 
+       * 注意
+       * 3D 和背景样式: 3D地形和 Free Camera API 只能与 globe 和 mercator 一起使用。
+       * 大气样式也仅在 globe 和 mercator 投影中受支持。在其他投影中，世界上的空白区域始终呈现为透明，并且可以通过更改地图容器上的 CSS 背景属性来设置样式。
+       * 自定义样式层: CustomLayerInterface只能与 mercator 一起使用。
       */
-      projection: 'naturalEarth' // 在构造器中设置投影
+      projection: 'globe', // 在构造器中设置投影
     });
 
     // 修改投影方法: setProjection
     map.setProjection({
-      name: 'lambertConformalConic'
+      name: 'globe'
     })
 
     // 获取当前投影: getProjection
     const projection = map.getProjection();
     console.log('当前投影', projection);
+
   </script>
 </body>
 </html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+  <!-- 引入 mapbox-gl-draw 与 Turf.js 的 CDN -->
+  <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+  <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.0/mapbox-gl-draw.js"></script>
+  <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.4.0/mapbox-gl-draw.css" type="text/css">
+  <title>绘制多边形并计算其面积</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    #map {
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .calculation-box {
+      height: 75px;
+      width: 160px;
+      position: absolute;
+      bottom: 40px;
+      left: 10px;
+      background-color: rgba(255, 255, 255, 0.9);
+      padding: 15px;
+      text-align: center;
+    }
+
+    p {
+      font-family: 'Open Sans';
+      margin: 0;
+      font-size: 13px;
+    }
+
+    #calculation-area {
+      height: 70%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <div class="calculation-box">
+    <p>单击地图以绘制多边形</p>
+    <div id="calculation-area"></div>
+  </div>
+  <!-- 
+    1.单击地图开始绘制多边形。
+    2.绘制最终顶点以完成多边形时双击。多边形的总面积将显示在地图的左下角。
+    3.要删除多边形并绘制新多边形，请使用地图右上角的绘制工具。
+
+    使用 mapbox-gl-draw 绘制多边形，并使用 Turf.js 计算其面积（以平方米为单位）。
+   -->
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoibGl1a2U5OCIsImEiOiJjbDZnNGJmNHMwbzJoM2lvcjJhZnV3NWo5In0.nmUwLFa4fv5PChNZUf2GwQ';
+    const map = new mapboxgl.Map({
+      container: 'map', 
+      style: 'mapbox://styles/mapbox/satellite-v9',
+      center: [121.58796, 38.88198],
+      zoom: 12,
+    });
+
+    // mapbox-gl-draw
+    const draw = new MapboxDraw({
+      displayControlsDefault: false, // 默认为 true, 如果您希望默认情况下关闭所有控件，并使用指定控件列表controls，请使用 displayControlsDefault: false。
+      /**
+       * 控件对象: 隐藏或显示单个控件。每个属性的名称是一个控件，值是一个布尔值，指示控件是打开还是关闭。
+       * 可用的控件名称是point、line_string、polygon、trash和。默认情况下，所有控件都处于打开状态。
+       * 要更改该默认值，请使用.combine_features，uncombine_features，displayControlsDefault
+       * */ 
+      controls: {
+        polygon: true, // 绘制区域
+        trash: true // 垃圾桶
+      },
+      defaultMode: 'draw_polygon' // 模式: 默认将 mapbox-gl-draw 设置为绘制。
+    });
+    console.log('mapbox-gl-draw: ', draw);
+
+    // 添加 mapbox-gl-draw 控件到地图
+    map.addControl(draw);
+
+    // 地图监听事件
+    map.on('draw.create', updateArea);
+    map.on('draw.delete', updateArea);
+    map.on('draw.update', updateArea);
+
+    // 计算面积
+    function updateArea(e) {
+      const data = draw.getAll(); // getAll: 返回所有要素的 FeatureCollection(特征集)。
+      const area = document.getElementById('calculation-area');
+      if (data.features.length > 0) {
+        const turfArea = turf.area(data); // 获取一个或多个特征并以平方米为单位返回它们的面积。
+        const areaRound = Math.round(turfArea * 100) / 100;
+        area.innerHTML = `<p><strong>${areaRound}</strong>平方米</p>`;
+      } else {
+        area.innerHTML = '';
+      }
+      console.log('计算面积', e, data);
+    }
+  </script>
+</body>
+</html>

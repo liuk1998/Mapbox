@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+  <title>使用 GeoJSON 源将多边形添加到地图</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    #map {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <!--
+    加载后，地图会addSource添加 GeoJSON 数据，其中包含一个描绘缅因州轮廓的多边形。
+    然后它用于addLayer创建一个新的填充层并应用paint属性来设置多边形外观的样式。
+    要在多边形周围添加轮廓，它会再次使用来创建引用相同 GeoJSON 源的addLayer新线层。 
+  -->
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoibGl1a2U5OCIsImEiOiJjbDZnNGJmNHMwbzJoM2lvcjJhZnV3NWo5In0.nmUwLFa4fv5PChNZUf2GwQ';
+    const map = new mapboxgl.Map({
+      container: 'map', 
+      style: 'mapbox://styles/mapbox/light-v11',
+      center: [-68.137343, 45.137451],
+      zoom: 5,
+    });
+
+    /**
+     * on: 地图监听事件
+     * load: 生命周期事件, 加载后执行
+     * addSource(control, position?): 将源添加到地图的样式。
+     * */
+    map.on('load', () => {
+      // 添加包含GeoJSON数据的数据源。绘制缅因州区域的多边形
+      map.addSource('maine', { // 缅因州
+        type: 'geojson',
+        data: {
+          type: 'Feature',
+          geometry: { // 几何
+            type: 'Polygon', // 多边形
+            coordinates: [ // 这些坐标勾勒出缅因州的轮廓。
+              [
+                [-67.13734, 45.13745],
+                [-66.96466, 44.8097],
+                [-68.03252, 44.3252],
+                [-69.06, 43.98],
+                [-70.11617, 43.68405],
+                [-70.64573, 43.09008],
+                [-70.75102, 43.08003],
+                [-70.79761, 43.21973],
+                [-70.98176, 43.36789],
+                [-70.94416, 43.46633],
+                [-71.08482, 45.30524],
+                [-70.66002, 45.46022],
+                [-70.30495, 45.91479],
+                [-70.00014, 46.69317],
+                [-69.23708, 47.44777],
+                [-68.90478, 47.18479],
+                [-68.2343, 47.35462],
+                [-67.79035, 47.06624],
+                [-67.79141, 45.70258],
+                [-67.13734, 45.13745]
+              ]
+            ]
+          }
+        }
+      });
+
+      // addLayer(layer, beforeId?): 添加图层
+      // 填充颜色图层
+      map.addLayer({
+        id: 'maine', // id
+        type: 'fill', // 类型
+        source: 'maine', // 用于此样式层的源层的名称
+        layout: {}, // 层的布局属性。
+        paint: { // 图层的绘画属性。
+          'fill-color': '#0080ff',
+          'fill-opacity': 0.5
+        }
+      });
+
+      // 绘制边框图层
+      map.addLayer({
+        id: 'outline',
+        type: 'line',
+        source: 'maine',
+        layout: {},
+        paint: {
+          'line-color': '#000',
+          'line-width': 3
+        }
+      });
+    });
+  </script>
+</body>
+</html>

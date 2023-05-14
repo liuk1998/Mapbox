@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+  <title>单击时显示弹出窗口</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    #map {
+      width: 100vw;
+      height: 100vh;
+    }
+
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <!-- 当用户单击icon时，显示一个包含更多信息的弹框。 -->
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoibGl1a2U5OCIsImEiOiJjbDZnNGJmNHMwbzJoM2lvcjJhZnV3NWo5In0.nmUwLFa4fv5PChNZUf2GwQ';
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/streets-v12',
+      center: [-77.04, 38.907],
+      zoom: 11.15,
+    });
+
+    map.on('load', () => {
+      map.addSource('places', { // 位置
+        // GeoJSON 包含包括图标的功能。图标属性的值对应到 Mapbox Streets 样式的精灵图像。
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection', // 功能集合
+          features: [ // 配置
+            {
+              type: 'Feature',
+              properties: {
+                // 文本描述
+                description: '<strong>Ballston工艺品市场</strong><p><a href="http://www.mtpleasantdc.com/makeitmtpleasant" target="_blank" title="打开一个新窗口">鲍尔斯顿工艺品市场</a>将于本周六在鲍尔斯顿地铁旁开店，这是今年夏天五场约会中的第一场。近35名艺术家和手工艺者将在现场出售他们的作品。晚上10:00-4:00。</p>', 
+                icon: 'art-gallery'  
+              },
+              geometry: {
+                type: 'Point',
+                coordinates: [-77.038659, 38.931567]
+              }
+            },
+            {
+              type: 'Feature',
+              properties: {
+                description: '<strong>《广告狂人》第五季结局观看派对</strong><p>周日前往201号休息室（马萨诸塞大道东北201号）<a href="http://www.mtpleasantdc.com/makeitmtpleasant" target="_blank" title="打开一个新窗口">《广告狂人》第五季结局观看派对</a>，包括60年代的服装比赛、《广告狂人》琐事以及复古食品和饮料。晚上8:00-11:00普通门票10美元，门票20美元，酒吧开放两小时。</p>', 
+                icon: 'theatre'  
+              },
+              geometry: {
+                type: 'Point',
+                coordinates: [-77.003168, 38.894651]
+              }
+            },
+            {
+              type: 'Feature',
+              properties: {
+                description: '<strong>大型后院海滩狂欢和葡萄酒节</strong><p>EatBar正在举办<a href="http://www.mtpleasantdc.com/makeitmtpleasant" target="_blank" title="打开一个新窗口">大型后院海滩狂欢和葡萄酒节</a>周六，供应海螺油条、鱼玉米卷和螃蟹滑片，以及红围裙热狗。下午12:00-3:00烧烤热狗$25。</p>', 
+                icon: 'bar'  
+              },
+              geometry: {
+                type: 'Point',
+                coordinates: [-77.090372, 38.881189]
+              }
+            },
+            {
+              type: 'Feature',
+              properties: {
+                description: '<strong>Seersucker自行车骑行和社交</strong><p>感觉很好吗？尽情享受，拿起你的自行车，参加今年的<a href="http://www.mtpleasantdc.com/makeitmtpleasant" target="_blank" title="打开一个新窗口">Seersucker自行车骑行</a>从Dandies和Quaintelles骑自行车。骑行结束后，在Hillwood享受一场草坪派对，包括爵士乐、鸡尾酒、纸帽子制作等。晚上11:00-7:00。</p>', 
+                icon: 'bicycle'  
+              },
+              geometry: {
+                type: 'Point',
+                coordinates: [-77.052477, 38.943951]
+              }
+            },
+            {
+              type: 'Feature',
+              properties: {
+                description: '<strong>首都骄傲游行</strong><p>年度<a href="http://www.mtpleasantdc.com/makeitmtpleasant" target="_blank" title="打开一个新窗口">首都骄傲游行</a>将于本周六在杜邦举行。下午4:30免费。</p>', 
+                icon: 'rocket'  
+              },
+              geometry: {
+                type: 'Point',
+                coordinates: [-77.043444, 38.909664]
+              }
+            },
+            {
+              type: 'Feature',
+              properties: {
+                description: '<strong>Truckeroo</strong><p><a href="http://www.mtpleasantdc.com/makeitmtpleasant" target="_blank" title="打开一个新窗口">Truckeroo</a>从今天上午11点到晚上11点，将数十辆食品车、现场音乐和游戏带到一半和M街SE（海军场地铁站对面）。</p>', 
+                icon: 'music'  
+              },
+              geometry: {
+                type: 'Point',
+                coordinates: [-77.007481, 38.876516]
+              }
+            }
+          ]
+        }
+      });
+
+      map.addLayer({
+        id: 'places',
+        type: 'symbol',
+        source: 'places',
+        layout: {
+          'icon-image': ['get', 'icon'],
+          'icon-allow-overlap': true // 图标允许重叠
+        }
+      });
+
+      // 当点击事件发生在位置层中时，在点击的位置，显示来自其属性的描述HTML。
+      map.on('click', 'places', (e) => {
+        // 获取坐标
+        const coordinates = e.features[0].geometry.coordinates;
+        // 获取描述文本
+        const description = e.features[0].properties.description;
+        console.log('点击事件', e, e.features);
+
+        /**
+         * 弹出组件
+         * setLngLat: 设置弹出窗口锚点的地理位置，并将弹出窗口移动到它。
+         * setHTML: 将弹出窗口的内容设置为作为字符串提供的 HTML。
+         * addTo: 将弹出窗口添加到地图。
+         * */ 
+        const popup = new mapboxgl.Popup();
+        popup.setLngLat(coordinates);
+        popup.setHTML(description);
+        popup.addTo(map);
+      });
+
+      // 鼠标移入改变样式
+      map.on('mouseenter', 'places', () => {
+        // getCanvas获取画布
+        map.getCanvas().style.cursor = 'pointer';
+      });
+      map.on('mouseleave', 'places', () => {
+        map.getCanvas().style.cursor = '';
+      });
+    });
+  </script>
+</body>
+</html>

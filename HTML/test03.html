@@ -88,7 +88,7 @@
     // 添加 mapbox-gl-draw 控件到地图
     map.addControl(draw);
 
-    // 地图监听事件
+    // 地图监听事件 on(type, layerIds, listener)
     map.on('draw.create', updateArea);
     map.on('draw.delete', updateArea);
     map.on('draw.update', updateArea);

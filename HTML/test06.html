@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+  <!-- 引入 mapbox-gl-geocoder CDN -->
+  <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.min.js"></script>
+  <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v5.0.0/mapbox-gl-geocoder.css" type="text/css">
+  <title>添加地理编码器</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    #map {
+      width: 100vw;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <!-- 
+    将地理编码控件添加到 Web 地图，使用户能够在地图上搜索地点。
+    在 script 标签内加载 mapbox-gl-geocoder 插件，然后使用 map.addControl 添加控件。MapboxGeocoder 对象使用 Mapbox Geocoding API 来启用地点搜索。
+  -->
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoibGl1a2U5OCIsImEiOiJjbDZnNGJmNHMwbzJoM2lvcjJhZnV3NWo5In0.nmUwLFa4fv5PChNZUf2GwQ';
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/streets-v12',
+      center: [121.58796, 38.88198],
+      zoom: 12,
+    });
+
+    // 将控件添加到地图中。
+    map.addControl(
+      new MapboxGeocoder({
+        accessToken: mapboxgl.accessToken, // 必填，所有地理编码请求都必须包含一个访问令牌。
+        mapboxgl: mapboxgl // 必填
+      })
+    );
+  </script>
+</body>
+</html>

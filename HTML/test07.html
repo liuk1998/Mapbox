@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+  <title>更改地图的语言</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    #map {
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+    }
+
+    #buttons {
+      width: 90%;
+      margin: 0 auto;
+    }
+
+    .button {
+      display: inline-block;
+      position: relative;
+      width: 20%;
+      padding: 8px;
+      border-radius: 3px;
+      margin-top: 10px;
+      padding: 8px;
+      font-size: 12px;
+      text-align: center;
+      color: #fff;
+      background: #ee8a65;
+      font-family: sans-serif;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <ul id="buttons">
+    <li id="button_en" class="button">英文</li>
+    <li id="button_zh-Hans" class="button">中文</li>
+    <li id="button_ja" class="button">日文</li>
+    <li id="button_ru" class="button">俄文</li>
+  </ul>
+  <!-- 用 setLayoutProperty 动态切换语言。有关更完整的解决方案，请参阅mapbox-gl-language插件。 -->
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoibGl1a2U5OCIsImEiOiJjbDZnNGJmNHMwbzJoM2lvcjJhZnV3NWo5In0.nmUwLFa4fv5PChNZUf2GwQ';
+    const map = new mapboxgl.Map({
+      container: 'map',
+      style: 'mapbox://styles/mapbox/streets-v12',
+      center: [121.58796, 38.88198],
+      zoom: 3,
+    });
+
+    document.getElementById('buttons').addEventListener('click', (e) => {
+      const language = e.target.id.substr('button_'.length);
+      /**
+       * setLayoutProperty(layerId, name, value, options = {}): 设置指定样式层中布局属性的值。
+       * 参数: 
+       * layerId要在其中设置布局属性的层的 ID。
+       * name要设置的布局属性的名称。
+       * value布局属性的值。必须是适合属性的类型，如 Mapbox Style Specification中所定义 。
+      */
+      map.setLayoutProperty('country-label', 'text-field', `{name_${language}}`);
+    });
+  </script>
+</body>
+</html>

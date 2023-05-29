@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js'></script>
+  <link href='https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css' rel='stylesheet' />
+  <!-- 引入 threebox CDN -->
+  <script src="https://cdn.jsdelivr.net/gh/jscastro76/threebox@v.2.2.2/dist/threebox.min.js" type="text/javascript"></script>
+  <link href="https://cdn.jsdelivr.net/gh/jscastro76/threebox@v.2.2.2/dist/threebox.css" rel="stylesheet">
+  <title>使用 threebox 添加 3D 模型</title>
+  <style>
+    * {
+      padding: 0;
+      margin: 0;
+    }
+
+    #map {
+      width: 100vw;
+      height: 100vh;
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <!-- 
+    使用带有threebox插件的自定义样式层将 3D 模型添加到地图。Threebox 抽象了 3D 渲染库three.js，并使其场景相机与 Mapbox GL JS 相机保持同步。
+    添加 3D 模型中提供了一个直接使用 three.js 来显示 3D 模型的替代示例。
+   -->
+  <script>
+    mapboxgl.accessToken = 'pk.eyJ1IjoibGl1a2U5OCIsImEiOiJjbDZnNGJmNHMwbzJoM2lvcjJhZnV3NWo5In0.nmUwLFa4fv5PChNZUf2GwQ';
+    const map = new mapboxgl.Map({
+      container: 'map', 
+      style: 'mapbox://styles/mapbox/streets-v12',
+      center: [-73.97627, 40.75155],
+      zoom: 15.4,
+      pitch: 64.9, // 倾斜 距屏幕平面的度数为单位
+      bearing: 172.2, // 轴承
+      antialias: true // 平滑 抗锯齿
+    });
+ 
+    // 创建 Threebox 全局实例
+    const tb = (window.tb = new Threebox(
+      map,
+      map.getCanvas().getContext('webgl'), // 地图画布的 context 内建对象
+      {
+        defaultLights: true // 是否向场景添加一些默认照明。 如果没有添加照明，场景中的大多数对象将呈现为黑色
+      }
+    ));
+
+    // style.load 在所有样式资源都已下载并且基本样式的第一个视觉完整呈现发生后立即触发。
+    map.on('style.load', () => {
+      map.addLayer({
+        id: 'custom-threebox-model',
+        type: 'custom',
+        renderingMode: '3d', // 渲染模式
+        onAdd: () => { // 添加要渲染的 3D 对象
+          const scale = 3.2;
+          const options = {
+            obj: 'https://docs.mapbox.com/mapbox-gl-js/assets/metlife-building.gltf',
+            type: 'gltf',
+            scale: { x: scale, y: scale, z: 2.7 },
+            units: 'meters', // 单位
+            rotation: { x: 90, y: -90, z: 0 }
+          };
+          // loadObj 加载 3D 模型 此异步方法从其各自的文件中加载不同格式的 3D 模型。
+          tb.loadObj(options, (model) => {
+            model.setCoords([-73.976799, 40.754145]); // 定位
+            model.setRotation({ x: 0, y: 0, z: 241 });
+            tb.add(model); // 添加到 Threebox 场景中
+          });
+        },
+        render: () => {
+          tb.update(); // 渲染
+        }
+      });
+    });
+  </script>
+</body>
+</html>
